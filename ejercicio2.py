@@ -75,17 +75,21 @@ class Statistical_Analysis:
 
 
 plt.figure()
-omega = np.linspace(1e2, 1e10, 101) * 2 * np.pi
-plt.plot(omega, np.abs(Panel(10e-3,  5,   .0).R(omega)))
-plt.plot(omega, np.abs(Panel(10e-3,  5,   .0).T(omega)))
+plt.xlim(0,5e10)
+omega = np.linspace(1, 3e12, 100001) * 2 *np.pi
+x = np.abs(Panel(3e-2,  4,   0.04).R(omega))
+y = np.abs(Panel(3e-2,  4,   0.04).T(omega))
+plt.plot(omega, x)
+plt.plot(omega, y)
+plt.plot(omega, x*x + y*y)
+plt.plot()
 
-
-
+"""
 plt.figure()
 omega = np.linspace(1e2, 1e10, 101) * 2 * np.pi
 plt.plot(omega, Statistical_Analysis(5,2,10000).Panel_Computation()[0])
 plt.plot(omega, Statistical_Analysis(5,2,10000).Panel_Computation()[1])
-
+"""
 
 
 """
