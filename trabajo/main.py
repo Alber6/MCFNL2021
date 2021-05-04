@@ -5,30 +5,39 @@ import copy
 import numpy as np
 
 
+sigma=0.04
+permittivity=4
+
+ddx=0.001
+start_m=110
+end_m=140
+
+thickness=(end_m-start_m)*ddx
+time=5e-8
 
 
-
-malla1=Mesh(200,0.001,4,0.04,110,140)
-malla2=Mesh(200,0.001,1,0,110,140)
+malla1=Mesh(200,ddx,permittivity,sigma,start_m,end_m)
+malla2=Mesh(200,ddx,1,0,start_m,end_m)
 pulso=Source('gauss',40,12,20)
 
 
-et1k1= FDTD(malla1,pulso,5e-8).FDTDLoop(110,140)[0]
-e2tk1= FDTD(malla2,pulso,5e-8).FDTDLoop(110,140)[0]
-et1k2= FDTD(malla1,pulso,5e-8).FDTDLoop(110,140)[1]
-e2tk2= FDTD(malla2,pulso,5e-8).FDTDLoop(110,140)[1]
+et1k1, et1k2, ex_film = FDTD(malla1,pulso,time).FDTDLoop(110,140)
+e2tk1, e2tk2, _= FDTD(malla2,pulso,time).FDTDLoop(110,140)
 
-ex_film=FDTD(malla1,pulso,5e-8).FDTDLoop(110,140)[2]
 Animator().animationex(ex_film,malla1)
+
+
+#FFT results  
 
 r= Utilities().FFT(et1k1,e2tk1,et1k2,e2tk2)[0]
 t= Utilities().FFT(et1k1,e2tk1,et1k2,e2tk2)[1]
-freq=Utilities().frequency(5e-8,et1k1)
+freq=Utilities().frequency(time,et1k1)
 
 #Analytical Result
+
 omega = np.linspace(1, 3e12, 100001) * 2 *np.pi
-x = np.abs(Panel(3e-2,  4,   0.04).R(omega))
-y = np.abs(Panel(3e-2,  4,   0.04).T(omega))
+x = np.abs(Panel(thickness,  permittivity,   sigma).R(omega))
+y = np.abs(Panel(thickness,  permittivity,   sigma).T(omega))
 
 
 
